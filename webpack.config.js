@@ -1,4 +1,5 @@
 const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
     mode: 'production',
@@ -6,6 +7,7 @@ module.exports = {
         app: path.resolve('index.js'),
     },
     output: {
+        filename: "app.js",
         path: path.resolve('./build'),
     },
     target: 'node',
@@ -22,5 +24,6 @@ module.exports = {
                 }
             }
         ]
-    }
+    },
+    externals: [nodeExternals()]
 }
