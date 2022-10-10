@@ -2,3 +2,4 @@
 .idea
 keys.js
 /build/
+/db/
