@@ -34,118 +34,83 @@ const getSubscribeTimesButtons = (type) => {
 }
 
 const zodiacSigns = {
-    Aries: { title: 'Овен', request: 'oвен', symbol: '♈'},
-    Taurus: { title: 'Телец', request: 'tелец', symbol: '♉'},
-    Gemini: { title: 'Близнецы', request: 'Близнецы', symbol: '♊'},
-    Cancer: { title: 'Телец', request: 'pак', symbol: '♋'},
-    Leo: { title: 'Лев', request: 'Лев', symbol: '♌'},
-    Virgo: { title: 'Дева', request: 'Дева', symbol: '♍'},
-    Libra: { title: 'Весы', request: 'bесы', symbol: '♎'},
-    Scorpio: { title: 'Скорпион', request: 'cкорпион', symbol: '♏'},
-    Sagittarius: { title: 'Стрелец', request: 'cтрелец', symbol: '♐'},
-    Capricorn: { title: 'Козерог', request: 'kозерог', symbol: '♑'},
-    Aquarius: { title: 'Водолей', request: 'bодолей', symbol: '♒'},
-    Pisces: { title: 'Рыбы', request: 'pыбы', symbol: '♓'},
+    Aries: { title: 'Овен', request: 'aries', symbol: '♈', born: '21 марта – 19 апреля'},
+    Taurus: { title: 'Телец', request: 'taurus', symbol: '♉', born: '21 апреля – 20 мая'},
+    Gemini: { title: 'Близнецы', request: 'gemini', symbol: '♊', born: '21 мая – 20 июня'},
+    Cancer: { title: 'Рак', request: 'cancer', symbol: '♋', born: '21 июня – 22 июля'},
+    Leo: { title: 'Лев', request: 'leo', symbol: '♌', born: '23 июля – 22 августа'},
+    Virgo: { title: 'Дева', request: 'virgo', symbol: '♍', born: '23 августа – 22 сентября'},
+    Libra: { title: 'Весы', request: 'libra', symbol: '♎', born: '23 сентября – 22 октября'},
+    Scorpio: { title: 'Скорпион', request: 'scorpio', symbol: '♏', born: '23 октября – 21 ноября'},
+    Sagittarius: { title: 'Стрелец', request: 'sagittarius', symbol: '♐', born: '22 ноября – 21 декабря'},
+    Capricorn: { title: 'Козерог', request: 'capricorn', symbol: '♑', born: '22 декабря – 19 января'},
+    Aquarius: { title: 'Водолей', request: 'aquarius', symbol: '♒', born: '20 января – 18 февраля'},
+    Pisces: { title: 'Рыбы', request: 'pisces', symbol: '♓', born: '19 февраля – 20 марта'},
 }
 
 const horoscopeData = {
     title: '',
+    symbol: '',
     born: '',
     date: '',
     description: '',
-    progress: {
-        health: 0,
-        energy: 0,
-        money: 0,
-        love: 0,
-        work: 0,
-        creation: 0,
-    },
-    luckyNumbers: '',
-    friendlySigns: '',
-    beware: '',
+    businessScore: '',
+    loveScore: '',
 }
 
 const getHoroscopeMsg = () => {
-    return `*${horoscopeData.title}* (${horoscopeData.born})
+    return `${horoscopeData.symbol} *${horoscopeData.title}* (${horoscopeData.born})
     
 *${horoscopeData.date}*
 ${horoscopeData.description} 
     
-*Здоровье*: ${horoscopeData.progress.health}%      *Энергия*: ${horoscopeData.progress.energy}%     *Деньги*: ${horoscopeData.progress.money}% 
-*Любовь*: ${horoscopeData.progress.love}%          *Работа*: ${horoscopeData.progress.work}%       *Творчество*: ${horoscopeData.progress.creation}%
-
-*Счастливые числа*: ${horoscopeData.luckyNumbers}
-*Дружественные знаки*: ${horoscopeData.friendlySigns}
-*Остерегаться*: ${horoscopeData.beware}`
-}
-
-const setTitle = (content) => {
-    horoscopeData.title = formatText(content?.querySelector('.chi_left')?.getElementsByTagName('h1')[0]?.childNodes[0]?._rawText)?.toUpperCase();
-}
-
-const setBornPeriod = (content) => {
-    horoscopeData.born = formatText(content?.querySelector('.chi_left')?.getElementsByTagName('h6')[0]?.childNodes[0]?._rawText);
+💼 *Бизнес*: ${horoscopeData.businessScore}     ❤️ *Любовь*: ${horoscopeData.loveScore}`
 }
 
 const setDate = (content) => {
-    horoscopeData.date = formatText(content?.getElementsByTagName('h4')[0]?.childNodes[0]?._rawText);
+    horoscopeData.date = content.querySelector('.link__text').textContent.replace('Прогноз на ', '');
 }
 
 const setDescription = (content) => {
-    horoscopeData.description = formatText(content?.getElementsByTagName('p')[0]?.childNodes[0]?._rawText);
+    let text= '';
+    content?.childNodes.forEach(i => text += i.textContent);
+    horoscopeData.description = formatText(text);
 }
 
-const setLuckyNumbers = (content) => {
-    horoscopeData.luckyNumbers = formatText(content?.getElementsByTagName('p')[1]?.childNodes[1]?._rawText);
+const setScoreDays = (content) => {
+    const scores = content.querySelectorAll('.p-score-day__item__value')
+    horoscopeData.businessScore = scores[0].textContent;
+    horoscopeData.loveScore = scores[1].textContent;
 }
 
-const setFriendlySigns = (content) => {
-    horoscopeData.friendlySigns = formatText(content?.getElementsByTagName('p')[2]?.childNodes[1]?._rawText);
-}
+const setHoroscopeData = (html, sign) => {
+    const content = html.querySelector('.article__item_html');
+    const currentDate = html.querySelector('.p-prediction__right');
+    const scoreDays = html.querySelector('.p-score-day');
 
-const setBeware = (content) => {
-    horoscopeData.beware = formatText(content?.getElementsByTagName('p')[3]?.childNodes[1]?._rawText);
-}
-
-const setProgress = (content) => {
-    const progressBlock = content?.getElementById('for_day');
-    const progressChildNodesKey = {
-        health: 1,
-        energy: 3,
-        money: 5,
-        love: 7,
-        work: 15,
-        creation: 17,
-    }
-
-    Object.keys(progressChildNodesKey).map(i => {
-        horoscopeData.progress[i] = progressBlock.childNodes[progressChildNodesKey[i]]?.querySelector('.right')?.childNodes[0]?._rawText?.trim();
-    })
-}
-
-const setHoroscopeData = (html) => {
-    const content = html.querySelector('.wrap2');
-
-    setTitle(content);
-    setBornPeriod(content);
-    setDate(content);
+    horoscopeData.title = zodiacSigns[sign].title;
+    horoscopeData.symbol = zodiacSigns[sign].symbol;
+    horoscopeData.born = zodiacSigns[sign].born;
+    setDate(currentDate);
     setDescription(content);
-    setLuckyNumbers(content);
-    setFriendlySigns(content);
-    setBeware(content);
-    setProgress(content);
+    setScoreDays(scoreDays);
+
 }
 
 const getHoroscope = async (sign, day) => {
     let param = `${zodiacSigns[sign].request}`;
 
-    if (day) day === 'nextDay' ? param += '_1' : param += '_-1';
+    if (day) {
+        day === 'nextDay' ? param += '/tomorrow' :  param += '/yesterday';
+    } else {
+        param += '/today';
+    }
+
 
     try {
-        const resp = await fetch(`https://goroskop.tv/${param}`)
-        const htmlText = await resp.text()
-        setHoroscopeData(parseHtml(htmlText));
+        const resp = await fetch(`https://horo.mail.ru/prediction/${param}`);
+        const htmlText = await resp.text();
+        setHoroscopeData(parseHtml(htmlText), sign);
         return getHoroscopeMsg();
     } catch (e){
         console.log('Error getHoroscope', e)

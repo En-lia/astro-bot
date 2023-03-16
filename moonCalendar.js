@@ -12,9 +12,11 @@ const moonCalendarData = {
 
 const getMoonDayMsg = () => {
     return `*${moonCalendarData.moonDayTitle}*
-${moonCalendarData.moonDayDescription}
+${moonCalendarData.moonDayDescription}`
+}
 
-*${moonCalendarData.moonTypeTitle}*
+const getMoonPhaseMsg = () => {
+    return `*${moonCalendarData.moonTypeTitle}*
 ${moonCalendarData.moonTypeDescription}`
 }
 
@@ -54,4 +56,5 @@ module.exports = {
     getMoonCalendar,
     getMoonDayMsg,
     getWeekDayMsg,
+    getMoonPhaseMsg,
 }

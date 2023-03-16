@@ -3,7 +3,7 @@ const {BOT_TOKEN} = require("./keys");
 const {SUBSCRIBE_TIMES_DATA, BOT_NAME} = require("./CONST");
 const {setUser, subscribeUser, unsubscribeUser, getUserSubscribes, SUBSCRIBES, USERS} = require("./users");
 const {zodiacSignsButtons, zodiacSigns, getHoroscopeButtons, getSubscribeTimesButtons, getHoroscope} = require("./horoscope");
-const {getMoonCalendar, getMoonDayMsg, getWeekDayMsg} = require("./moonCalendar");
+const {getMoonCalendar, getMoonDayMsg, getWeekDayMsg, getMoonPhaseMsg} = require("./moonCalendar");
 
 const bot = new TelegramBot(BOT_TOKEN, {polling: true});
 
@@ -62,6 +62,8 @@ const startBot = () => {
         const isSubscribeTimeToCalendar = option === 'subscribeTimeCalendar';
         const isUnsubscribeHoroscope = option === 'unsubscribeHoroscope';
         const isUnsubscribeCalendar = option === 'unsubscribeCalendar';
+        const isMoonDayPhaseInfo = option === 'moonDayPhaseInfo';
+        const isWeekDayInfo = option === 'weekDayInfo';
 
         if ( isNextDay || isPrevDay) await sendZodiacSignMessage(param, chatId, option);
         if (isSubscribeToHoroscope) {
@@ -110,6 +112,20 @@ const startBot = () => {
                 `Готово! Вы отписаны от рассылки лунного календаря`,
                 { parse_mode: 'Markdown' });
         }
+
+        if (isMoonDayPhaseInfo) {
+            const moonPhaseMsg = getMoonPhaseMsg();
+            return bot.sendMessage(chatId,
+                moonPhaseMsg,
+                { parse_mode: 'Markdown' });
+        }
+
+        if (isWeekDayInfo) {
+            const weekDayMsg = getWeekDayMsg();
+            return bot.sendMessage(chatId,
+                weekDayMsg,
+                { parse_mode: 'Markdown' });
+        }
     })
 
     console.log('Bot is starting...');
@@ -125,15 +141,8 @@ const sendStartMessage = async (chatId, name) => {
 }
 
 const sendCalendarMessage = async (chatId) => {
-    await sendMoonCalendarMessage(chatId);
-    return bot.sendMessage(chatId, 'Ниже можно подписаться на рассылку лунного календаря', {
-        reply_markup: JSON.stringify({
-            inline_keyboard: [
-                [{text: '📬 Подписаться на рассылку лунного календаря', callback_data: `subscribeCalendar`}],
-            ]
-        }),
-        parse_mode: 'Markdown'
-    });
+    const keyboardItem = [{text: '📬 Подписаться на рассылку лунного календаря', callback_data: `subscribeCalendar`}];
+    await sendMoonCalendarMessage(chatId, keyboardItem);
 }
 
 const sendMySubscribesMassage = async (chatId) => {
@@ -152,13 +161,22 @@ const sendZodiacSignMessage = async (data, chatId, option) => {
     return bot.sendMessage(chatId, horoscope, { parse_mode: 'Markdown' });
 }
 
-const sendMoonCalendarMessage = async (userId) => {
+const sendMoonCalendarMessage = async (userId, keyboardItem) => {
     await getMoonCalendar();
     const moonDayMsg = getMoonDayMsg();
-    const weekDayMsg = getWeekDayMsg();
+    const keyboard = [
+        [{text: '🌓 Подробнее про Фазу луны', callback_data: `moonDayPhaseInfo`}],
+        [{text: '📆 Узнать про Влияние дня недели ', callback_data: `weekDayInfo`}],
+    ]
 
-    await bot.sendMessage(userId, moonDayMsg, { parse_mode: 'Markdown' });
-    await bot.sendMessage(userId, weekDayMsg, { parse_mode: 'Markdown' });
+    if (keyboardItem) keyboard.push(keyboardItem);
+
+    await bot.sendMessage(userId, moonDayMsg, {
+        reply_markup: JSON.stringify({
+            inline_keyboard: keyboard
+        }),
+        parse_mode: 'Markdown'
+    });
 }
 
 const sendMailing =  () => {
