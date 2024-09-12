@@ -62,39 +62,35 @@ const getHoroscopeMsg = () => {
     return `${horoscopeData.symbol} *${horoscopeData.title}* (${horoscopeData.born})
     
 *${horoscopeData.date}*
-${horoscopeData.description} 
-    
-💼 *Бизнес*: ${horoscopeData.businessScore}     ❤️ *Любовь*: ${horoscopeData.loveScore}`
+${horoscopeData.description}`
 }
 
 const setDate = (content) => {
-    horoscopeData.date = content.querySelector('.link__text').textContent.replace('Прогноз на ', '');
+    horoscopeData.date = content.querySelector('span').text.replace('Прогноз на ', '');
 }
 
-const setDescription = (content) => {
-    let text= '';
-    content?.childNodes.forEach(i => text += i.textContent);
-    horoscopeData.description = formatText(text);
-}
+const setDescription = (article) => {
+    let content = '';
 
-const setScoreDays = (content) => {
-    const scores = content.querySelectorAll('.p-score-day__item__value')
-    horoscopeData.businessScore = scores[0].textContent;
-    horoscopeData.loveScore = scores[1].textContent;
+    article?.forEach((item) => {
+        const pElement = item.querySelector('div p');
+
+        if (pElement) {
+            content += `${pElement.text}\n\n`;
+        }
+    });
+
+    horoscopeData.description = formatText(content);
 }
 
 const setHoroscopeData = (html, sign) => {
-    const content = html.querySelector('.article__item_html');
-    const currentDate = html.querySelector('.p-prediction__right');
-    const scoreDays = html.querySelector('.p-score-day');
-
+    const article = html.querySelectorAll('div[article-item-type="html"]');
+    const currentDate = html.querySelector('div[data-logger="Breadcrumbs"][role="navigation"]');
     horoscopeData.title = zodiacSigns[sign].title;
     horoscopeData.symbol = zodiacSigns[sign].symbol;
     horoscopeData.born = zodiacSigns[sign].born;
     setDate(currentDate);
-    setDescription(content);
-    setScoreDays(scoreDays);
-
+    setDescription(article);
 }
 
 const getHoroscope = async (sign, day) => {

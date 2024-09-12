@@ -6,7 +6,7 @@ const parseHtml = (htmlText) => {
 }
 
 const formatText = (text) => {
-    return text.trim().replace(/(\r\n|\n|\r)/gm, ' ');
+    return text.trim().replace(/(\r\n|\r)/gm, ' ');
 }
 
 const getSubscribeTimesData = () => {

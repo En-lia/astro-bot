@@ -50,7 +50,12 @@ const startBot = () => {
 
         if (isZodiacSign) {
             await sendZodiacSignMessage(data, chatId);
-            return bot.sendMessage(chatId, `${zodiacSigns[data].symbol} Может что-нибудь еще для знака *${zodiacSigns[data].title}?*`, getHoroscopeButtons(data));
+            return bot.sendMessage(
+                chatId,
+                `${zodiacSigns[data].symbol} Может что-нибудь еще для знака *${zodiacSigns[data].title}?*`,
+                {... getHoroscopeButtons(data),
+                    parse_mode: 'Markdown'
+                });
         }
 
         const [option, param] = data.split('-');
